@@ -3,13 +3,14 @@ import pygame
 
 pygame.init()
 
-moving = False
+width = 756
+height = 610
 current_key = 0
 white = (255, 255, 255)
 black = (0, 0, 0)
-screen = pygame.display.set_mode( (650, 600) )
+screen = pygame.display.set_mode( (width, height) )
 character_speed = 15
-x = 325
+x = 228
 y = 500
 
 while True:
@@ -23,27 +24,31 @@ while True:
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_LEFT]:
-        if keys[pygame.K_LSHIFT]:
-            x -= character_speed - 5
-        else:
-            x -= character_speed
+        if x > 6:
+            if keys[pygame.K_LSHIFT]:
+                x -= round(character_speed / 2.5)
+            else:
+                x -= character_speed
     if keys[pygame.K_RIGHT]:
-        if keys[pygame.K_LSHIFT]:
-            x += character_speed - 5
-        else:
-            x += character_speed
+        if x < width / 1.6:
+            if keys[pygame.K_LSHIFT]:
+                x += round(character_speed / 2.5)
+            else:
+                x += character_speed
     if keys[pygame.K_UP]:
-        if keys[pygame.K_LSHIFT]:
-            y -= character_speed - 5
-        else:
-            y -= character_speed
+        if y > 12:
+            if keys[pygame.K_LSHIFT]:
+                y -= round(character_speed / 2.5)
+            else:
+                y -= character_speed
     if keys[pygame.K_DOWN]:
-        if keys[pygame.K_LSHIFT]:
-            y += character_speed - 5
-        else:
-            y += character_speed
+        if y < height - 10:
+            if keys[pygame.K_LSHIFT]:
+                y += round(character_speed / 2.5)
+            else:
+                y += character_speed
 
             
     screen.fill(black)
-    pygame.draw.circle(screen, white, (x, y), 10)  
+    pygame.draw.circle(screen, white, (x, y), 6)  
     pygame.display.update()

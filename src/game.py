@@ -8,6 +8,8 @@ height = 610
 current_key = 0
 white = (255, 255, 255)
 black = (0, 0, 0)
+pink = (186, 9, 115)
+purple = (83, 11, 122)
 screen = pygame.display.set_mode( (width, height) )
 character_speed = 15
 x = 228
@@ -49,6 +51,7 @@ while True:
                 y += character_speed
 
             
-    screen.fill(black)
-    pygame.draw.circle(screen, white, (x, y), 6)  
+    screen.fill(pink)
+    pygame.draw.circle(screen, white, (x, y), 6)
+    pygame.draw.rect(screen, purple, (round(756 / 1.6) + 15, 0, 756 - 756 / 2, height))
     pygame.display.update()

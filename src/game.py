@@ -19,7 +19,16 @@ if True:
     y = 500
     power = 1
     score = 0
+    font_score = pygame.font.SysFont("comicsansms", 20)
+    score_text = font_score.render(f"Score: {score} ", True, white)
+    font_power = pygame.font.SysFont("comicsansms", 20)
+    power_text = font_score.render(f"Power: {power} ", True, white)
 
+
+
+
+
+pygame.display.flip()
 #game starts the main loop
 while True:
     #game delays the reading of the code so its not too fast when it runs
@@ -67,12 +76,12 @@ while True:
                 else:
                     y += character_speed
 
-
-
     screen.fill(pink)
     pygame.draw.circle(screen, white, (x, y), 5)
     pygame.draw.rect(screen, purple, (round(width / 1.6) + 20, 0, width - width / 2, height))
     pygame.draw.rect(screen, purple, (0, 0, width, 15))
     pygame.draw.rect(screen, purple, (0, height - 15, width, 20))
     pygame.draw.rect(screen, purple, (0, 0, 30, height))
+    screen.blit(score_text, (500, 10) )
+    screen.blit(power_text, (500, 80) )
     pygame.display.update()

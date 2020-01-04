@@ -19,10 +19,11 @@ if True:
     screen = pygame.display.set_mode( (width, height) )
     power = 1
     score = 0
-    grazes = 0
+    graze = 0
     size = 25
     lives = 3
     shoot_time = 0
+    graze_time = 0
     
 
 pygame.display.flip()
@@ -145,7 +146,7 @@ class Player_hitbox(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
-class Enemy(pygame.sprite.Sprite):
+class Simple_Enemy(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)   
         self.image = pygame.Surface((30, 30))
@@ -154,9 +155,11 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = random.randrange(int(width / 1.55 - self.rect.width))
         self.rect.y = random.randrange(-100, -40)
         self.speedy = random.randrange(1, 8)
+        self.speedx = random.randrange(-2, 2)
 
     def update(self):
         self.rect.y += self.speedy
+        self.rect.x += self.speedx
         if self.rect.top > height + 10 or self.rect.left < -25 or self.rect.right > width/1.55 + 25:
             self.rect.x = random.randrange(int(width / 1.55 - self.rect.width))
             self.rect.y = random.randrange(-100, -40)
@@ -224,7 +227,7 @@ bullet = pygame.image.load("src/img/heart.png")
 bullet = pygame.transform.scale(bullet, (35, 35))
 
 all_sprites = pygame.sprite.Group()
-enemies = pygame.sprite.Group()
+simple_enemies = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 points = pygame.sprite.Group()
 powers = pygame.sprite.Group()
@@ -234,9 +237,9 @@ all_sprites.add(player)
 all_sprites.add(hitbox)
 #spawns in this number of enemies
 for n in range(40):
-    e = Enemy()
-    all_sprites.add(e)
-    enemies.add(e)
+    se = Simple_Enemy()
+    all_sprites.add(se)
+    simple_enemies.add(se)
 
 #game starts the main loop
 while True:
@@ -252,7 +255,7 @@ while True:
 
     #if the z button is pressed, allows the user to shoot a bullet
     if keys[pygame.K_z]:
-        if shoot_time < 5:
+        if shoot_time < 3:
             #creates a delay in firing to ensure that a constant stream of bullets is lessened
             shoot_time += 1
         else:
@@ -261,14 +264,14 @@ while True:
             shoot_time = 0
     all_sprites.update()
     #checks to see if the bullets and enemies touch, both disappear if they are
-    hits = pygame.sprite.groupcollide(enemies, bullets, True, True)
+    hits = pygame.sprite.groupcollide(simple_enemies, bullets, True, True)
     for hit in hits:
         #a point item is dropped
         hit.drop()
         #a new enemy is spawned and added to the list of sprites
-        e = Enemy()
-        all_sprites.add(e)
-        enemies.add(e)
+        se = Simple_Enemy()
+        all_sprites.add(se)
+        simple_enemies.add(se)
         #score increases for eaach enemy killed
         score += 1
     #checks to see if player touches a point box, points disappear if they touch
@@ -278,9 +281,10 @@ while True:
         score += 5
     hits = pygame.sprite.spritecollide(player, powers, True)
     for hit in hits:
+        #each power box gives 1 power
         power += 1
     #checks to see if player hitbox hit an enemy
-    hits = pygame.sprite.spritecollide(hitbox, enemies, False)
+    hits = pygame.sprite.spritecollide(hitbox, simple_enemies, False)
     if hits:
         if lives != 0:
             #if the player still has lives left, deduct one and continue
@@ -289,9 +293,13 @@ while True:
         else:
             #if no more lives remain, exit
             pygame.QUIT()
-    """grazing = pygame.sprite.spritecollide(player, enemies, False)
-    if grazing:
-        grazes += 1"""
+    grazing = pygame.sprite.spritecollide(player, simple_enemies, False)
+    for grazes in grazing:
+        if graze_time < 5:
+            graze_time += 1
+        else:
+            graze += 1
+            graze_time = 0
 
     screen.fill(pink)
 
@@ -304,7 +312,7 @@ while True:
     pygame.draw.rect(screen, purple, (0, 0, 30, height))
     #these text update various numbers involved in game display
     font_grazes = pygame.font.SysFont("comicsansms", 20)
-    grazes_text = font_grazes.render(f"Grazes: {grazes}", True, white)
+    grazes_text = font_grazes.render(f"Grazes: {graze}", True, white)
     font_score = pygame.font.SysFont("comicsansms", 20)
     score_text = font_score.render(f"Score: {score} ", True, white)
     font_power = pygame.font.SysFont("comicsansms", 20)
@@ -316,8 +324,8 @@ while True:
 
 """Things left to do for next time:
 - Add in enemy HP
+- Add enemy types (basic top to bottom, ones that explode if shot, basic bullet shots, advanced bullet shots)
 - Add in enemy bullets
 - Fix grazing
-- Add in score and power points
 - Add in images
 - Add in lives"""

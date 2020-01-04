@@ -15,6 +15,7 @@ if True:
     black = (0, 0, 0)
     pink = (186, 9, 115)
     purple = (83, 11, 122)
+    blue = (0, 0, 255)
     screen = pygame.display.set_mode( (width, height) )
     power = 1
     score = 0
@@ -162,9 +163,15 @@ class Enemy(pygame.sprite.Sprite):
             self.speedy = random.randrange(1, 4)
     
     def drop(self):
-        point = Point(self.rect.centerx, self.rect.top)
-        all_sprites.add(point)
-        points.add(point)
+        if random.randint(0, 100) > 50:
+            point = Point(self.rect.centerx, self.rect.bottom)
+            all_sprites.add(point)
+            points.add(point)
+        elif random.randint(0, 100) > 90:
+            power = Power(self.rect.centerx, self.rect.bottom)
+            all_sprites.add(power)
+            powers.add(power)
+        
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -189,7 +196,23 @@ class Point(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
-        self.speedy = 4
+        self.speedy = 3
+    
+    def update(self):
+        self.rect.y += self.speedy
+
+        if self.rect.y > height:
+            self.kill()
+
+class Power(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((15, 15))
+        self.image.fill(blue)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = 3
     
     def update(self):
         self.rect.y += self.speedy
@@ -241,7 +264,7 @@ while True:
     hits = pygame.sprite.groupcollide(enemies, bullets, True, True)
     for hit in hits:
         #a point item is dropped
-        e.drop()
+        hit.drop()
         #a new enemy is spawned and added to the list of sprites
         e = Enemy()
         all_sprites.add(e)
@@ -253,6 +276,9 @@ while True:
     for hit in hits:
         #each point box gives 5 points
         score += 5
+    hits = pygame.sprite.spritecollide(player, powers, True)
+    for hit in hits:
+        power += 1
     #checks to see if player hitbox hit an enemy
     hits = pygame.sprite.spritecollide(hitbox, enemies, False)
     if hits:

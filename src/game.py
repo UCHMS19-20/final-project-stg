@@ -1,6 +1,8 @@
 import sys
 import random
 import pygame
+import math
+from pygame.math import Vector2
 
 #initializes the program
 pygame.init()
@@ -16,6 +18,9 @@ if True:
     pink = (186, 9, 115)
     purple = (83, 11, 122)
     blue = (0, 0, 255)
+    silver = (192, 192, 192)
+    gray = (128, 128, 128)
+    red = (255, 0, 0)
     screen = pygame.display.set_mode( (width, height) )
     power = 1
     score = 0
@@ -23,6 +28,7 @@ if True:
     size = 25
     lives = 3
     shoot_time = 0
+    easy_time = 0
     graze_time = 0
     
 
@@ -181,6 +187,46 @@ class Simple_Enemy(pygame.sprite.Sprite):
             all_sprites.add(power)
             powers.add(power)
         
+class Easy_Bullet_Enemy(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)   
+        self.image = pygame.Surface((30, 30))
+        self.image.fill(silver)
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(int(width / 1.55 - self.rect.width))
+        self.rect.y = random.randrange(-100, -40)
+        self.speedy = random.randrange(1, 8)
+        self.speedx = random.randrange(-2, 2)
+        self.health = 5
+
+    def update(self):
+        self.rect.y += self.speedy
+        self.rect.x += self.speedx
+        if self.rect.top > height + 10 or self.rect.left < -25 or self.rect.right > width/1.55 + 25:
+            self.rect.x = random.randrange(int(width / 1.55 - self.rect.width))
+            self.rect.y = random.randrange(-100, -40)
+            self.speedy = random.randrange(1, 4)
+
+    def shoot(self):
+        easy_bullet = Easy_Bullet(self.rect.centerx, self.rect.bottom)
+        all_sprites.add(easy_bullet)
+        easy_bullets.add(easy_bullet)
+
+    def damage(self):
+        self.health -= 1
+        if self.health < 0:
+            self.kill()
+
+    def drop(self):
+        if random.randint(0, 100) > 70:
+            point = Point(self.rect.centerx, self.rect.bottom)
+            all_sprites.add(point)
+            points.add(point)
+        elif random.randint(0, 100) > 90:
+            power = Power(self.rect.centerx, self.rect.bottom)
+            all_sprites.add(power)
+            powers.add(power)
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -195,6 +241,28 @@ class Bullet(pygame.sprite.Sprite):
 
         if self.rect.bottom < 0:
             self.kill()
+
+class Easy_Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((5, 5))
+        self.image.fill(red)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speed = 8
+        self.present_x = hitbox.rect.x - self.rect.x
+        self.present_y = hitbox.rect.y - self.rect.y
+        self.V = pygame.math.Vector2(self.present_x, self.present_y)
+        self.V.normalize()
+        self.V.scale_to_length(self.speed)
+
+    def update(self):
+        self.rect.move_ip(self.V)
+
+        
+
+    
 
 class Point(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -233,6 +301,8 @@ bullet = pygame.transform.scale(bullet, (25, 25))
 
 all_sprites = pygame.sprite.Group()
 simple_enemies = pygame.sprite.Group()
+easy_bullet_enemies = pygame.sprite.Group()
+easy_bullets = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 points = pygame.sprite.Group()
 powers = pygame.sprite.Group()
@@ -241,10 +311,14 @@ hitbox = Player_hitbox()
 all_sprites.add(player)
 all_sprites.add(hitbox)
 #spawns in this number of enemies
-for n in range(70):
+for n in range(20):
     se = Simple_Enemy()
     all_sprites.add(se)
     simple_enemies.add(se)
+for n in range(10):
+    ebe = Easy_Bullet_Enemy()
+    all_sprites.add(ebe)
+    easy_bullet_enemies.add(ebe)
 
 #game starts the main loop
 while True:
@@ -258,6 +332,12 @@ while True:
     
     keys = pygame.key.get_pressed()
 
+    for e in easy_bullet_enemies:
+        if easy_time < 15:
+            easy_time += 1
+        else:
+            e.shoot()
+            easy_time = 0
     #if the z button is pressed, allows the user to shoot a bullet
     if keys[pygame.K_z]:
         if shoot_time < 3:
@@ -280,8 +360,19 @@ while True:
             all_sprites.add(se)
             simple_enemies.add(se)
             #score increases for eaach enemy killed
-            score += 1
-        
+            score += 1   
+    hits = pygame.sprite.groupcollide(easy_bullet_enemies, bullets, False, True)
+    for hit in hits:
+        hit.damage()
+        if hit.health < 0:
+            #a point item is dropped
+            hit.drop()
+            #a new enemy is spawned and added to the list of sprites
+            ebe = Easy_Bullet_Enemy()
+            all_sprites.add(ebe)
+            easy_bullet_enemies.add(ebe)
+            #score increases for eaach enemy killed
+            score += 1   
     #checks to see if player touches a point box, points disappear if they touch
     hits = pygame.sprite.spritecollide(player, points, True)
     for hit in hits:
@@ -301,6 +392,18 @@ while True:
         else:
             #if no more lives remain, exit
             pygame.QUIT()
+    hits = pygame.sprite.spritecollide(hitbox, easy_bullet_enemies, False)
+    if hits:
+        if lives != 0:
+            lives -= 1
+        else:
+            pygame.QUIT()
+    """hits = pygame.sprite.spritecollide(hitbox, easy_bullets, True)
+    if hits:
+        if lives != 0:
+            lives -= 1
+        else:
+            pygame.QUIT()"""
     grazing = pygame.sprite.spritecollide(player, simple_enemies, False)
     for grazes in grazing:
         if graze_time < 5:
@@ -332,7 +435,7 @@ while True:
 
 """Things left to do for next time:
 - Add in enemy HP
-- Add enemy types (ones that explode if shot, basic bullet shots, advanced bullet shots)
+- Add enemy types (basic bullet shots, advanced bullet shots)
 - Add in enemy bullets
 - Add in images
 - Add in lives"""

@@ -193,10 +193,11 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
         self.image = pygame.Surface((30, 30))
         self.image.fill(silver)
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(int(width / 1.55 - self.rect.width))
-        self.rect.y = random.randrange(-100, -40)
-        self.speedy = random.randrange(1, 8)
-        self.speedx = random.randrange(-2, 2)
+        self.side = random.randint(0,100)
+        self.rect.x = -20 if self.side >= 50 else width / 1.55 - self.rect.width + 20
+        self.rect.y = random.randrange(self.rect.height, 35)
+        self.speedy = random.randrange(0, 2)
+        self.speedx = random.randrange(1, 8) if self.side >= 50 else random.randrange(-8, -1)
         self.health = 5
 
     def update(self):
@@ -208,9 +209,14 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
             self.speedy = random.randrange(1, 4)
 
     def shoot(self):
-        easy_bullet = Easy_Bullet(self.rect.centerx, self.rect.bottom)
-        all_sprites.add(easy_bullet)
-        easy_bullets.add(easy_bullet)
+        global easy_time
+        if easy_time < 20:
+            easy_time += 1
+        else: 
+            easy_bullet = Easy_Bullet(self.rect.centerx, self.rect.bottom)
+            all_sprites.add(easy_bullet)
+            easy_bullets.add(easy_bullet)
+            easy_time = 0
 
     def damage(self):
         self.health -= 1
@@ -315,7 +321,7 @@ for n in range(20):
     se = Simple_Enemy()
     all_sprites.add(se)
     simple_enemies.add(se)
-for n in range(10):
+for n in range(2):
     ebe = Easy_Bullet_Enemy()
     all_sprites.add(ebe)
     easy_bullet_enemies.add(ebe)
@@ -333,11 +339,7 @@ while True:
     keys = pygame.key.get_pressed()
 
     for e in easy_bullet_enemies:
-        if easy_time < 15:
-            easy_time += 1
-        else:
-            e.shoot()
-            easy_time = 0
+        e.shoot()
     #if the z button is pressed, allows the user to shoot a bullet
     if keys[pygame.K_z]:
         if shoot_time < 3:
@@ -434,8 +436,7 @@ while True:
     pygame.display.update()
 
 """Things left to do for next time:
-- Add in enemy HP
-- Add enemy types (basic bullet shots, advanced bullet shots)
+- Add enemy types (basic bullet shots)
 - Add in enemy bullets
 - Add in images
 - Add in lives"""

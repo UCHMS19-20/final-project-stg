@@ -87,7 +87,7 @@ class Player(pygame.sprite.Sprite):
 
     def shoot(self):
         if power < 15:
-            bullet = Bullet(self.rect.centerx, self.rect.top)
+            bullet = Bullet(self.rect.centerx, self.rect.bottom)
             all_sprites.add(bullet)
             bullets.add(bullet)
 
@@ -156,6 +156,7 @@ class Simple_Enemy(pygame.sprite.Sprite):
         self.rect.y = random.randrange(-100, -40)
         self.speedy = random.randrange(1, 8)
         self.speedx = random.randrange(-2, 2)
+        self.health = 5
 
     def update(self):
         self.rect.y += self.speedy
@@ -164,9 +165,14 @@ class Simple_Enemy(pygame.sprite.Sprite):
             self.rect.x = random.randrange(int(width / 1.55 - self.rect.width))
             self.rect.y = random.randrange(-100, -40)
             self.speedy = random.randrange(1, 4)
-    
+
+    def damage(self):
+        self.health -= 1
+        if self.health < 0:
+            self.kill()
+
     def drop(self):
-        if random.randint(0, 100) > 50:
+        if random.randint(0, 100) > 70:
             point = Point(self.rect.centerx, self.rect.bottom)
             all_sprites.add(point)
             points.add(point)
@@ -175,7 +181,6 @@ class Simple_Enemy(pygame.sprite.Sprite):
             all_sprites.add(power)
             powers.add(power)
         
-
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -224,7 +229,7 @@ class Power(pygame.sprite.Sprite):
             self.kill()
 
 bullet = pygame.image.load("src/img/heart.png")
-bullet = pygame.transform.scale(bullet, (35, 35))
+bullet = pygame.transform.scale(bullet, (25, 25))
 
 all_sprites = pygame.sprite.Group()
 simple_enemies = pygame.sprite.Group()
@@ -236,7 +241,7 @@ hitbox = Player_hitbox()
 all_sprites.add(player)
 all_sprites.add(hitbox)
 #spawns in this number of enemies
-for n in range(40):
+for n in range(70):
     se = Simple_Enemy()
     all_sprites.add(se)
     simple_enemies.add(se)
@@ -264,16 +269,19 @@ while True:
             shoot_time = 0
     all_sprites.update()
     #checks to see if the bullets and enemies touch, both disappear if they are
-    hits = pygame.sprite.groupcollide(simple_enemies, bullets, True, True)
+    hits = pygame.sprite.groupcollide(simple_enemies, bullets, False, True)
     for hit in hits:
-        #a point item is dropped
-        hit.drop()
-        #a new enemy is spawned and added to the list of sprites
-        se = Simple_Enemy()
-        all_sprites.add(se)
-        simple_enemies.add(se)
-        #score increases for eaach enemy killed
-        score += 1
+        hit.damage()
+        if hit.health < 0:
+            #a point item is dropped
+            hit.drop()
+            #a new enemy is spawned and added to the list of sprites
+            se = Simple_Enemy()
+            all_sprites.add(se)
+            simple_enemies.add(se)
+            #score increases for eaach enemy killed
+            score += 1
+        
     #checks to see if player touches a point box, points disappear if they touch
     hits = pygame.sprite.spritecollide(player, points, True)
     for hit in hits:
@@ -324,8 +332,7 @@ while True:
 
 """Things left to do for next time:
 - Add in enemy HP
-- Add enemy types (basic top to bottom, ones that explode if shot, basic bullet shots, advanced bullet shots)
+- Add enemy types (ones that explode if shot, basic bullet shots, advanced bullet shots)
 - Add in enemy bullets
-- Fix grazing
 - Add in images
 - Add in lives"""

@@ -93,11 +93,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.speedy
 
     def shoot(self):
-        if power < 15:
+        if power < 10:
             bullet = Bullet(self.rect.centerx, self.rect.bottom)
             all_sprites.add(bullet)
             bullets.add(bullet)
-        elif power < 30:
+        elif power < 25:
             bullet = Bullet(self.rect.centerx - 15, self.rect.bottom)
             all_sprites.add(bullet)
             bullets.add(bullet)
@@ -203,7 +203,7 @@ class Simple_Enemy(pygame.sprite.Sprite):
             point = Point(self.rect.centerx, self.rect.bottom)
             all_sprites.add(point)
             points.add(point)
-        elif random.randint(0, 100) > 90:
+        elif random.randint(0, 100) > 50:
             power = Power(self.rect.centerx, self.rect.bottom)
             all_sprites.add(power)
             powers.add(power)
@@ -249,7 +249,7 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
             point = Point(self.rect.centerx, self.rect.bottom)
             all_sprites.add(point)
             points.add(point)
-        elif random.randint(0, 100) > 90:
+        elif random.randint(0, 100) > 50:
             power = Power(self.rect.centerx, self.rect.bottom)
             all_sprites.add(power)
             powers.add(power)

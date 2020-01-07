@@ -31,6 +31,7 @@ if True:
     easy_time = 0
     graze_time = 0
     score_check = 0
+    invincibility = 0
     
 
 pygame.display.flip()
@@ -93,18 +94,18 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.speedy
 
     def shoot(self):
-        if power < 10:
+        if power < 15:
             bullet = Bullet(self.rect.centerx, self.rect.bottom)
             all_sprites.add(bullet)
             bullets.add(bullet)
-        elif power < 25:
+        elif power < 35:
             bullet = Bullet(self.rect.centerx - 15, self.rect.bottom)
             all_sprites.add(bullet)
             bullets.add(bullet)
             bullet = Bullet(self.rect.centerx + 15, self.rect.bottom)
             all_sprites.add(bullet)
             bullets.add(bullet)
-        elif power < 45:
+        elif power < 60:
             bullet = Bullet(self.rect.centerx - 18, self.rect.bottom)
             all_sprites.add(bullet)
             bullets.add(bullet)
@@ -177,7 +178,7 @@ class Simple_Enemy(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)   
         self.image = pygame.Surface((30, 30))
-        self.image.fill(white)
+        self.image.fill(red)
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(int(width / 1.55 - self.rect.width))
         self.rect.y = random.randrange(-100, -40)
@@ -203,7 +204,7 @@ class Simple_Enemy(pygame.sprite.Sprite):
             point = Point(self.rect.centerx, self.rect.bottom)
             all_sprites.add(point)
             points.add(point)
-        elif random.randint(0, 100) > 50:
+        elif random.randint(0, 100) > 80:
             power = Power(self.rect.centerx, self.rect.bottom)
             all_sprites.add(power)
             powers.add(power)
@@ -212,7 +213,7 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)   
         self.image = pygame.Surface((30, 30))
-        self.image.fill(silver)
+        self.image.fill(purple)
         self.rect = self.image.get_rect()
         self.side = random.randint(0,100)
         self.rect.x = -20 if self.side >= 50 else width / 1.55 - self.rect.width + 20
@@ -231,7 +232,7 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
 
     def shoot(self):
         global easy_time
-        if easy_time < 20:
+        if easy_time < 36:
             easy_time += 1
         else: 
             easy_bullet = Easy_Bullet(self.rect.centerx, self.rect.bottom)
@@ -249,7 +250,7 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
             point = Point(self.rect.centerx, self.rect.bottom)
             all_sprites.add(point)
             points.add(point)
-        elif random.randint(0, 100) > 50:
+        elif random.randint(0, 100) > 60:
             power = Power(self.rect.centerx, self.rect.bottom)
             all_sprites.add(power)
             powers.add(power)
@@ -284,7 +285,7 @@ class Easy_Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((5, 5))
-        self.image.fill(white)
+        self.image.fill(purple)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -298,9 +299,6 @@ class Easy_Bullet(pygame.sprite.Sprite):
     def update(self):
         self.rect.move_ip(self.V)
 
-        
-
-    
 
 class Point(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -368,13 +366,13 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
     if score_check != 3:
-        if score < 100 and score > 50:
+        if score < 150 and score > 50:
             score_check = 2
     elif score_check != 5:
-        if score < 150 and score > 100:
+        if score < 300 and score > 150:
             score_check = 4
     elif score_check != 7:
-        if score < 200 and score > 150:
+        if score < 450 and score > 300:
             score_check = 6
     
     if score_check == 0:
@@ -421,7 +419,7 @@ while True:
         e.shoot()
     #if the z button is pressed, allows the user to shoot a bullet
     if keys[pygame.K_z]:
-        if shoot_time < 3:
+        if shoot_time < 5:
             #creates a delay in firing to ensure that a constant stream of bullets is lessened
             shoot_time += 1
         else:
@@ -479,7 +477,7 @@ while True:
             lives -= 1
         else:
             pygame.QUIT()
-    hits = pygame.sprite.spritecollide(hitbox, easy_bullets, True)
+    hits = pygame.sprite.spritecollide(hitbox, easy_bullets, False)
     if hits:
         if lives != 0:
             lives -= 1
@@ -506,15 +504,15 @@ while True:
         else:
             graze += 1
             graze_time = 0
-    screen.fill(pink)
+    screen.fill(silver)
 
     all_sprites.draw(screen)
 
     #these rectangles set up the window formatting
-    pygame.draw.rect(screen, purple, (round(width / 1.55), 0, width - width / 2, height))
-    pygame.draw.rect(screen, purple, (0, 0, width, 15))
-    pygame.draw.rect(screen, purple, (0, height - 15, width, 20))
-    pygame.draw.rect(screen, purple, (0, 0, 30, height))
+    pygame.draw.rect(screen, gray, (round(width / 1.55), 0, width - width / 2, height))
+    pygame.draw.rect(screen, gray, (0, 0, width, 15))
+    pygame.draw.rect(screen, gray, (0, height - 15, width, 20))
+    pygame.draw.rect(screen, gray, (0, 0, 30, height))
     #these text update various numbers involved in game display
     font_grazes = pygame.font.SysFont("comicsansms", 20)
     grazes_text = font_grazes.render(f"Grazes: {graze}", True, white)
@@ -522,13 +520,17 @@ while True:
     score_text = font_score.render(f"Score: {score} ", True, white)
     font_power = pygame.font.SysFont("comicsansms", 20)
     power_text = font_power.render(f"Power: {power} ", True, white)
+    font_lives = pygame.font.SysFont("comicsansms", 20)
+    lives_text = font_lives.render("Lives: ", True, white)
     screen.blit(score_text, (width / 1.5, 10) )
     screen.blit(power_text, (width / 1.5, 80) )
     screen.blit(grazes_text, (width / 1.5, 150) )
+    screen.blit(lives_text, (width / 1.5, 220))
     pygame.display.update()
 
 """Things left to do for next time:
 - Add enemy types (basic bullet shots)
 - Add in images
-- Make power work
+- Add in menu with (play, instructions, quit)
+- Add in final score screen when lives are 0
 - Add in lives"""

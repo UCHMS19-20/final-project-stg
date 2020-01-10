@@ -36,6 +36,7 @@ if True:
     invincibility = 0
     invincibility_timer = 0
     lives_position = round(width / 1.55) + 75
+    difficulty_selection = 1
     running = True
     menu = True
     instructions = False
@@ -49,6 +50,17 @@ if True:
     font_instructions = pygame.font.SysFont("comicsansms", 20)
     font_difficulty = pygame.font.SysFont("comicsansms", 20)
     font_quit = pygame.font.SysFont("comicsansms", 20)
+    font_difficulty_selected = pygame.font.SysFont("comicsansms", 20)
+    font_instructions_selected = pygame.font.SysFont("comicsansms", 15)
+    font_easy = pygame.font.SysFont("comicsansms", 20)
+    font_medium = pygame.font.SysFont("comicsansms", 20)
+    font_hard = pygame.font.SysFont("comicsansms", 20)
+    font_Sanservino = pygame.font.SysFont("comicsansms", 20)
+    font_easy_description = pygame.font.SysFont("comicsansms", 15)
+    font_medium_description = pygame.font.SysFont("comicsansms", 15)
+    font_hard_description = pygame.font.SysFont("comicsansms", 15)
+    font_Sanservino_description = pygame.font.SysFont("comicsansms", 15)
+    font_final = pygame.font.SysFont("comicsansms", 30)
     
 
 pygame.display.flip()
@@ -502,6 +514,7 @@ class Power(pygame.sprite.Sprite):
 bullet = pygame.image.load("src/img/heart.png")
 bullet = pygame.transform.scale(bullet, (15, 15))
 
+#puts all of the sprites into a sprite group for collisions to work later
 all_sprites = pygame.sprite.Group()
 simple_enemies = pygame.sprite.Group()
 hard_enemies = pygame.sprite.Group()
@@ -517,6 +530,7 @@ hitbox = Player_hitbox()
 all_sprites.add(player)
 all_sprites.add(hitbox)
 
+#begins the menu prompt
 while menu:
     clock.tick(60)
 
@@ -527,22 +541,50 @@ while menu:
         
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                if menu_selection != 1:
-                    menu_selection -= 1
+                if not difficulty:
+                    #moves the selected option up if it is not at the highest option
+                    if menu_selection != 1:
+                        menu_selection -= 1
+                else:
+                    if difficulty_selection != 1:
+                        difficulty_selection -= 1
             if event.key == pygame.K_DOWN:
-                if menu_selection != 4:
-                    menu_selection += 1
+                #moves the selected option down if it is not at the lowest option
+                if not difficulty:
+                    if menu_selection != 4:
+                        menu_selection += 1
+                else:
+                    if difficulty_selection != 4:
+                        difficulty_selection += 1
+            #z is used to select the menu prompts
             if event.key == pygame.K_z:
-                if menu_selection == 1:
-                    menu = False
-                if menu_selection == 2:
-                    instructions == True
-                if menu_selection == 3:
-                    difficulty == True
-                if menu_selection == 4:
-                    pygame.QUIT()
+                if not difficulty:
+                    if menu_selection == 1:
+                        menu = False
+                    if menu_selection == 2:
+                        instructions = True
+                        difficulty = False
+                    if menu_selection == 3:
+                        difficulty = True
+                        instructions = False
+                    if menu_selection == 4:
+                        pygame.QUIT()
+                else:
+                    if difficulty_selection == 1:
+                        lives = 10
+                        difficulty = False
+                    if difficulty_selection == 2:
+                        lives = 5
+                        difficulty = False
+                    if difficulty_selection == 3:
+                        lives = 2
+                        difficulty = False
+                    if difficulty_selection == 4:
+                        lives = 0
+                        difficulty = False
     
     screen.fill(pink)
+    #based on what the variable is, it darkens the selected menu prompt
     if menu_selection == 1:
         start_text = font_start.render(f"Start", True, black)
         instructions_text = font_instructions.render(f"Instructions", True, white)
@@ -563,8 +605,91 @@ while menu:
         instructions_text = font_instructions.render(f"Instructions", True, white)
         difficulty_text = font_difficulty.render(f"Difficulty", True, white)
         quit_text = font_quit.render("Quit", True, black)
+
     
+    if instructions:
+        instructions_selected_text = font_start.render("Move using the arrow keys.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 100))
+        instructions_selected_text = font_start.render("Hold shift while moving to slow movements.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 125))
+        instructions_selected_text = font_start.render("Press Z to shoot out bullets.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 150))
+        instructions_selected_text = font_start.render("Shoot enemies to drop power-ups.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 175))
+        instructions_selected_text = font_start.render("Blue power-up increases power.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 200))
+        instructions_selected_text = font_start.render("Black power-up increases score.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 225))
+        instructions_selected_text = font_start.render("Red enemies move straight down.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 250))
+        instructions_selected_text = font_start.render("Orange enemies cannot be defeated.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 275))
+        instructions_selected_text = font_start.render("Purple enemies shoot bullets.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 300))
+        instructions_selected_text = font_start.render("When hit, you will lose a life.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 325))
+        instructions_selected_text = font_start.render("Getting hit grants short invincibility.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 350))
+        instructions_selected_text = font_start.render("Touching the enemies with the player", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 375))
+        instructions_selected_text = font_start.render("without touching the hitbox grants points.", True, white)
+        screen.blit(instructions_selected_text, (width / 2.3, 400))
     
+    if difficulty:
+        if difficulty_selection == 1:
+            easy_text = font_easy.render(f"Easy", True, black)
+            screen.blit(easy_text, (width / 2.3, 200) )
+            easy_description = font_easy_description.render("Nice and chillin'. 10 lives are given to the player.", True, white)
+            screen.blit(easy_description, (width / 2.3, 235) )
+            easy_description = font_easy_description.render("A casual player's preferred difficulty.", True, white)
+            screen.blit(easy_description, (width / 2.3, 270) )
+            medium_text = font_medium.render(f"Normal", True, white)
+            screen.blit(medium_text, (width / 2.3, 300) )
+            hard_text = font_hard.render(f"Hard", True, white)
+            screen.blit(hard_text, (width / 2.3, 400) )
+            sanservino_text = font_Sanservino.render("Sanservino", True, white)
+            screen.blit(sanservino_text, (width / 2.3, 500) )
+        if difficulty_selection == 2:
+            easy_text = font_easy.render(f"Easy", True, white)
+            screen.blit(easy_text, (width / 2.3, 200) )
+            medium_text = font_medium.render(f"Normal", True, black)
+            screen.blit(medium_text, (width / 2.3, 300) )
+            medium_description = font_medium_description.render("A bit challenging. 5 lives are given to the player.", True, white)
+            screen.blit(medium_description, (width / 2.3, 335) )
+            medium_description = font_medium_description.render("Intended for most players.", True, white)
+            screen.blit(medium_description, (width / 2.3, 370) )
+            hard_text = font_hard.render(f"Hard", True, white)
+            screen.blit(hard_text, (width / 2.3, 400) )
+            sanservino_text = font_Sanservino.render("Sanservino", True, white)
+            screen.blit(sanservino_text, (width / 2.3, 500) )
+        if difficulty_selection == 3:
+            easy_text = font_easy.render(f"Easy", True, white)
+            screen.blit(easy_text, (width / 2.3, 200) )
+            medium_text = font_medium.render(f"Normal", True, white)
+            screen.blit(medium_text, (width / 2.3, 300) )
+            hard_text = font_hard.render(f"Hard", True, black)
+            screen.blit(hard_text, (width / 2.3, 400) )
+            hard_description = font_hard_description.render("Quite difficult. 2 lives are given to the player.", True, white)
+            screen.blit(hard_description, (width / 2.3, 435) )
+            hard_description = font_hard_description.render("Good for those who like to lose.", True, white)
+            screen.blit(hard_description, (width / 2.3, 470) )
+            sanservino_text = font_Sanservino.render("Sanservino", True, white)
+            screen.blit(sanservino_text, (width / 2.3, 500) )
+        if difficulty_selection == 4:
+            easy_text = font_easy.render(f"Easy", True, white)
+            screen.blit(easy_text, (width / 2.3, 200) )
+            medium_text = font_medium.render(f"Normal", True, white)
+            screen.blit(medium_text, (width / 2.3, 300) )
+            hard_text = font_hard.render(f"Hard", True, white)
+            screen.blit(hard_text, (width / 2.3, 400) )
+            sanservino_text = font_Sanservino.render("Sanservino", True, black)
+            sanservino_description = font_Sanservino_description.render("A brutal campaign with only one life.", True, white)
+            screen.blit(sanservino_description, (width / 2.3, 535) )
+            sanservino_description = font_Sanservino_description.render("Good for masochists and idiots.", True, white)
+            screen.blit(sanservino_description, (width / 2.3, 570) )
+            screen.blit(sanservino_text, (width / 2.3, 500) )
+
+
     screen.blit(start_text, (width / 5, 250) )
     screen.blit(instructions_text, (width / 6, 325) )
     screen.blit(difficulty_text, (width / 7, 400) )
@@ -585,6 +710,7 @@ while running:
             sys.exit()
     print(score_check)
 
+    #sets the score_check based on the score the player has
     if score_check != 3:
         if score < 150 and score > 50:
             score_check = 2
@@ -604,6 +730,7 @@ while running:
         if score < 1250 and score > 1000:
             score_check = 12
     
+    #sends out various enemies in waves as the player score increases
     if score_check == 0:
         for n in range(10):
             se = Simple_Enemy()
@@ -756,18 +883,22 @@ while running:
         hits = pygame.sprite.spritecollide(hitbox, easy_bullet_enemies, False)
         if hits:
             if lives != 0:
+                #if the player still has lives left, deduct one and continue
                 lives -= 1
                 player.hit()
                 invincibility_timer = 60
             else:
+                #if no more lives remain, exit
                 running = False
         hits = pygame.sprite.spritecollide(hitbox, easy_bullets, False)
         if hits:
             if lives != 0:
+                #if the player still has lives left, deduct one and continue
                 lives -= 1
                 player.hit()
                 invincibility_timer = 60
             else:
+                #if no more lives remain, exit
                 running = False
         hits = pygame.sprite.spritecollide(hitbox, hard_enemies, False)
         if hits:
@@ -782,25 +913,32 @@ while running:
         hits = pygame.sprite.spritecollide(hitbox, hard_bullet_enemies, False)
         if hits:
             if lives != 0:
+                #if the player still has lives left, deduct one and continue
                 lives -= 1
                 player.hit()
                 invincibility_timer = 60
             else:
+                #if no more lives remain, exit
                 running = False
         hits = pygame.sprite.spritecollide(hitbox, hard_bullets, False)
         if hits:
             if lives != 0:
+                #if the player still has lives left, deduct one and continue
                 lives -= 1
                 player.hit()
                 invincibility_timer = 60
             else:
+                #if no more lives remain, exit
                 running = False
+
+    #invincibility timer works by creating a time delay from getting hit, to the next time the hit will count, giving the player some invincibility frames
     if invincibility_timer > 0:
         invincibility_timer -= 1
         invincibility = 1
     if invincibility_timer == 0:
         invincibility = 0
         player.normal()
+    #checks grazing and sees whether or not the player hits into the various types of enemies
     grazing = pygame.sprite.spritecollide(player, simple_enemies, False)
     for grazes in grazing:
         if graze_time < 5:
@@ -853,56 +991,59 @@ while running:
     pygame.draw.rect(screen, gray, (0, 0, width, 15))
     pygame.draw.rect(screen, gray, (0, height - 15, width, 20))
     pygame.draw.rect(screen, gray, (0, 0, 30, height))
-    if lives == 10:
-        for n in range(10):
-            pygame.draw.rect(screen, red, (lives_position, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 9:
-        for n in range(9):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 8:
-        for n in range(8):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 7:
-        for n in range(7):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 6:
-        for n in range(6):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 5:
-        for n in range(5):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 4:
-        for n in range(4):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 3:
-        for n in range(3):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 2:
-        for n in range(2):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
-    if lives == 1:
-        for n in range(1):
-            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
-            lives_position += 10
-        lives_position = round(width / 1.55) + 75
+    
+    #repeats code for making a life symbol on the side of the screen, depending on number of lives left
+    if lives > 0:
+        if lives == 10:
+            for n in range(10):
+                pygame.draw.rect(screen, red, (lives_position, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 9:
+            for n in range(9):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 8:
+            for n in range(8):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 7:
+            for n in range(7):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 6:
+            for n in range(6):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 5:
+            for n in range(5):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 4:
+            for n in range(4):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 3:
+            for n in range(3):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 2:
+            for n in range(2):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
+        if lives == 1:
+            for n in range(1):
+                pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+                lives_position += 10
+            lives_position = round(width / 1.55) + 75
     
     #these text update various numbers involved in game display
     lives_text = font_lives.render("Lives: ", True, white)
@@ -915,6 +1056,16 @@ while running:
     screen.blit(lives_text, (width / 1.5, 220))
     pygame.display.update()
 
+while not running:
+    screen = pygame.display.set_mode( (width, height) )
+    screen.fill(black)
+    screen.blit(score_text, 100, 300)
+    screen.blit(grazes_text, 100, 400)
+    screen.blit(power_text, 100, 500)
+    calculation_text = font_power.render(f"Final score: ({score}) + ({graze} * 2) + ({power})", True, white)
+    screen.blit(calculation_text, 100, 600)
+    final_text = font_final.render(f"Final Score: {score + graze * 2 + power}", True, white)
+    screen.blit(font_final, 100, 650)
+
 """Things left to do for next time:
-- Finalize menu functionality
 - Add in final score screen when lives are 0"""

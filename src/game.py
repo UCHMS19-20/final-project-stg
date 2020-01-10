@@ -23,11 +23,11 @@ if True:
     red = (255, 0, 0)
     orange = (255,69,0)
     screen = pygame.display.set_mode( (width, height) )
-    power = 100
+    power = 0
     score = 0
     graze = 0
     size = 25
-    lives = 999
+    lives = 3
     shoot_time = 0
     easy_time = 0
     hard_time = 0
@@ -35,6 +35,7 @@ if True:
     score_check = 0
     invincibility = 0
     invincibility_timer = 0
+    lives_position = round(width / 1.55) + 75
     running = True
     menu = True
     instructions = False
@@ -751,7 +752,7 @@ while running:
                 invincibility_timer = 60
             else:
                 #if no more lives remain, exit
-                pygame.QUIT()
+                running = False
         hits = pygame.sprite.spritecollide(hitbox, easy_bullet_enemies, False)
         if hits:
             if lives != 0:
@@ -759,7 +760,7 @@ while running:
                 player.hit()
                 invincibility_timer = 60
             else:
-                pygame.QUIT()
+                running = False
         hits = pygame.sprite.spritecollide(hitbox, easy_bullets, False)
         if hits:
             if lives != 0:
@@ -767,7 +768,7 @@ while running:
                 player.hit()
                 invincibility_timer = 60
             else:
-                pygame.QUIT()
+                running = False
         hits = pygame.sprite.spritecollide(hitbox, hard_enemies, False)
         if hits:
             if lives != 0:
@@ -777,7 +778,7 @@ while running:
                 invincibility_timer = 60
             else:
                 #if no more lives remain, exit
-                pygame.QUIT()
+                running = False
         hits = pygame.sprite.spritecollide(hitbox, hard_bullet_enemies, False)
         if hits:
             if lives != 0:
@@ -785,7 +786,7 @@ while running:
                 player.hit()
                 invincibility_timer = 60
             else:
-                pygame.QUIT()
+                running = False
         hits = pygame.sprite.spritecollide(hitbox, hard_bullets, False)
         if hits:
             if lives != 0:
@@ -793,7 +794,7 @@ while running:
                 player.hit()
                 invincibility_timer = 60
             else:
-                pygame.QUIT()
+                running = False
     if invincibility_timer > 0:
         invincibility_timer -= 1
         invincibility = 1
@@ -852,6 +853,57 @@ while running:
     pygame.draw.rect(screen, gray, (0, 0, width, 15))
     pygame.draw.rect(screen, gray, (0, height - 15, width, 20))
     pygame.draw.rect(screen, gray, (0, 0, 30, height))
+    if lives == 10:
+        for n in range(10):
+            pygame.draw.rect(screen, red, (lives_position, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 9:
+        for n in range(9):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 8:
+        for n in range(8):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 7:
+        for n in range(7):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 6:
+        for n in range(6):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 5:
+        for n in range(5):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 4:
+        for n in range(4):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 3:
+        for n in range(3):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 2:
+        for n in range(2):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    if lives == 1:
+        for n in range(1):
+            pygame.draw.rect(screen, red, (lives_position + 5, 235, 5, 5))
+            lives_position += 10
+        lives_position = round(width / 1.55) + 75
+    
     #these text update various numbers involved in game display
     lives_text = font_lives.render("Lives: ", True, white)
     grazes_text = font_grazes.render(f"Grazes: {graze}", True, white)
@@ -864,5 +916,5 @@ while running:
     pygame.display.update()
 
 """Things left to do for next time:
-- Add in menu with (play, instructions, quit)
+- Finalize menu functionality
 - Add in final score screen when lives are 0"""

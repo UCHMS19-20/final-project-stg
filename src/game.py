@@ -1054,18 +1054,23 @@ while running:
     screen.blit(power_text, (width / 1.5, 80) )
     screen.blit(grazes_text, (width / 1.5, 150) )
     screen.blit(lives_text, (width / 1.5, 220))
+    
+
     pygame.display.update()
 
-while not running:
-    screen = pygame.display.set_mode( (width, height) )
-    screen.fill(black)
-    screen.blit(score_text, 100, 300)
-    screen.blit(grazes_text, 100, 400)
-    screen.blit(power_text, 100, 500)
-    calculation_text = font_power.render(f"Final score: ({score}) + ({graze} * 2) + ({power})", True, white)
-    screen.blit(calculation_text, 100, 600)
-    final_text = font_final.render(f"Final Score: {score + graze * 2 + power}", True, white)
-    screen.blit(font_final, 100, 650)
+screen = pygame.display.set_mode( (width, height) )
+screen.fill(black)
+screen.blit(score_text, (100, 100))
+screen.blit(grazes_text, (100, 200))
+screen.blit(power_text, (100, 300))
+calculation_text = font_power.render(f"Final score: ({score}) + ({graze} * 2) + ({power})", True, white)
+screen.blit(calculation_text, (100, 400))
+final_text = font_final.render(f"Final Score: {score + graze * 2 + power}", True, white)
+screen.blit(final_text, (100, 550))
+pygame.display.update()
+pygame.time.wait(6500)
+
+
 
 """Things left to do for next time:
 - Add in final score screen when lives are 0"""

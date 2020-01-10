@@ -32,6 +32,7 @@ if True:
     graze_time = 0
     score_check = 0
     invincibility = 0
+    invincibility_timer = 0
     
 
 pygame.display.flip()
@@ -118,6 +119,15 @@ class Player(pygame.sprite.Sprite):
             bullet = Bullet(self.rect.centerx + 30, self.rect.bottom)
             all_sprites.add(bullet)
             bullets.add(bullet)
+    
+    def hit(self):
+        self.image.fill(red)
+
+    def normal(self):
+        self.image.fill(black)
+
+
+
 
 class Player_hitbox(pygame.sprite.Sprite):
     def __init__(self):
@@ -452,6 +462,7 @@ while True:
             easy_bullet_enemies.add(ebe)
             #score increases for eaach enemy killed
             score += 1   
+    
     #checks to see if player touches a point box, points disappear if they touch
     hits = pygame.sprite.spritecollide(player, points, True)
     for hit in hits:
@@ -462,27 +473,39 @@ while True:
         #each power box gives 1 power
         power += 1
     #checks to see if player hitbox hit an enemy
-    hits = pygame.sprite.spritecollide(hitbox, simple_enemies, False)
-    if hits:
-        if lives != 0:
-            #if the player still has lives left, deduct one and continue
-            lives -= 1
-            print(lives)
-        else:
-            #if no more lives remain, exit
-            pygame.QUIT()
-    hits = pygame.sprite.spritecollide(hitbox, easy_bullet_enemies, False)
-    if hits:
-        if lives != 0:
-            lives -= 1
-        else:
-            pygame.QUIT()
-    hits = pygame.sprite.spritecollide(hitbox, easy_bullets, False)
-    if hits:
-        if lives != 0:
-            lives -= 1
-        else:
-            pygame.QUIT()
+    if invincibility == 0:
+        hits = pygame.sprite.spritecollide(hitbox, simple_enemies, False)
+        if hits:
+            if lives != 0:
+                #if the player still has lives left, deduct one and continue
+                lives -= 1
+                player.hit()
+                invincibility_timer = 60
+            else:
+                #if no more lives remain, exit
+                pygame.QUIT()
+        hits = pygame.sprite.spritecollide(hitbox, easy_bullet_enemies, False)
+        if hits:
+            if lives != 0:
+                lives -= 1
+                player.hit()
+                invincibility_timer = 60
+            else:
+                pygame.QUIT()
+        hits = pygame.sprite.spritecollide(hitbox, easy_bullets, False)
+        if hits:
+            if lives != 0:
+                lives -= 1
+                player.hit()
+                invincibility_timer = 60
+            else:
+                pygame.QUIT()
+    if invincibility_timer > 0:
+        invincibility_timer -= 1
+        invincibility = 1
+    if invincibility_timer == 0:
+        invincibility = 0
+        player.normal()
     grazing = pygame.sprite.spritecollide(player, simple_enemies, False)
     for grazes in grazing:
         if graze_time < 5:

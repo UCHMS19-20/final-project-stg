@@ -7,6 +7,11 @@ from pygame.math import Vector2
 #initializes the program
 pygame.init()
 pygame.mixer.init()
+
+#load and play background music
+pygame.mixer.music.load("src/mus/TOUCH.mp3")
+pygame.mixer.music.play(90, 1.5)
+#allows the use of the clock to slow down main loop
 clock = pygame.time.Clock()
 #if statement has no purpose other than being able to store large amounts of variables
 if True:
@@ -66,6 +71,7 @@ if True:
 pygame.display.flip()
 
 class Player(pygame.sprite.Sprite):
+    """Creates a player class that can be controlled by the user"""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((size, size))
@@ -81,7 +87,7 @@ class Player(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         keys = pygame.key.get_pressed()
-        #following code works out player movement
+        #following code works out player movement when an arrow key is pressed
         if keys[pygame.K_LEFT]:
             if keys[pygame.K_RIGHT]:
                 #holding down left shift will slow down movement
@@ -94,7 +100,6 @@ class Player(pygame.sprite.Sprite):
                     self.speedx = -self.speed / 2
                 else:
                     self.speedx = -self.speed
-                    
         if keys[pygame.K_RIGHT]:
             if keys[pygame.K_LSHIFT]:
                 self.speedx = self.speed / 2
@@ -104,13 +109,13 @@ class Player(pygame.sprite.Sprite):
             if keys[pygame.K_LSHIFT]:
                 self.speedy = -self.speed / 2
             else:
-                self.speedy = -self.speed
-                
+                self.speedy = -self.speed     
         if keys[pygame.K_DOWN]:
             if keys[pygame.K_LSHIFT]:
                 self.speedy = self.speed / 2
             else:
                 self.speedy = self.speed
+        #if player goes beyond the border, it sets the position to the border coordinate
         if self.rect.right > width / 1.55 + ((size / 2) - size / 8):
             self.rect.right = width / 1.55 + ((size / 2) - size / 8)
         if self.rect.left < 30 - ((size / 2) - size / 8):
@@ -119,10 +124,14 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 15 - ((size / 2) - size / 8)
         if self.rect.bottom > height - 15 + ((size / 2) - size / 8):
             self.rect.bottom = height - 15 + ((size / 2) - size / 8)
+        #changes its coordinates based on self.speed
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
+    
     def shoot(self):
+        """Defines what the player does when shooting bullets"""
+        #depending on the power level, various bullet classes are called
         if power < 15:
             bullet = Bullet(self.rect.centerx, self.rect.bottom)
             all_sprites.add(bullet)
@@ -171,12 +180,15 @@ class Player(pygame.sprite.Sprite):
             bullets.add(bullet)
     
     def hit(self):
+        """Changes the player color to red when invincible after getting hit"""
         self.image.fill(red)
 
     def normal(self):
+        """Changes the player color to black when not invincible after getting hit"""
         self.image.fill(black)
 
 class Player_hitbox(pygame.sprite.Sprite):
+    """Hitbox class acts similar to player class, except this class checks for collisions later in the code"""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((size / 4, size / 4))
@@ -192,8 +204,10 @@ class Player_hitbox(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         keys = pygame.key.get_pressed()
+        #moves player hitbox based on what arrow keys are pressed
         if keys[pygame.K_LEFT]:
             if keys[pygame.K_RIGHT]:
+                #slows down movement when left shift is pressed
                 if keys[pygame.K_LSHIFT]:
                     self.speedx = -self.speed
                 else:
@@ -202,8 +216,7 @@ class Player_hitbox(pygame.sprite.Sprite):
                 if keys[pygame.K_LSHIFT]:
                     self.speedx = -self.speed / 2
                 else:
-                    self.speedx = -self.speed
-                    
+                    self.speedx = -self.speed        
         if keys[pygame.K_RIGHT]:
             if keys[pygame.K_LSHIFT]:
                 self.speedx = self.speed / 2
@@ -214,12 +227,12 @@ class Player_hitbox(pygame.sprite.Sprite):
                 self.speedy = -self.speed / 2
             else:
                 self.speedy = -self.speed
-                
         if keys[pygame.K_DOWN]:
             if keys[pygame.K_LSHIFT]:
                 self.speedy = self.speed / 2
             else:
                 self.speedy = self.speed
+        #if hitbox goes beyond the border, the coordinates are set to at the border itself
         if self.rect.right > width / 1.55:
             self.rect.right = width / 1.55
         if self.rect.left < 30:
@@ -228,10 +241,12 @@ class Player_hitbox(pygame.sprite.Sprite):
             self.rect.top = 15
         if self.rect.bottom > height - 15:
             self.rect.bottom = height - 15
+        #changes x and y positions based on self.speed
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
 class Simple_Enemy(pygame.sprite.Sprite):
+    """Creates a simple enemy that simply falls from the top at random speeds"""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)   
         self.image = pygame.Surface((30, 30))
@@ -252,11 +267,13 @@ class Simple_Enemy(pygame.sprite.Sprite):
             self.speedy = random.randrange(1, 4)
 
     def damage(self):
+        """Subtracts health from self when hit by player bullet, disappearing when health = 0"""
         self.health -= 1
         if self.health < 0:
             self.kill()
 
     def drop(self):
+        """Drops a point or power class object based on random chance"""
         if random.randint(0, 100) > 70:
             point = Point(self.rect.centerx, self.rect.bottom)
             all_sprites.add(point)
@@ -267,6 +284,7 @@ class Simple_Enemy(pygame.sprite.Sprite):
             powers.add(power)
         
 class Hard_Enemy(pygame.sprite.Sprite):
+    """Creates an enemy that falls down slowly, and cannot be killed by player"""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)   
         self.image = pygame.Surface((250, 30))
@@ -285,11 +303,13 @@ class Hard_Enemy(pygame.sprite.Sprite):
             self.speedy = random.randrange(1, 2)
 
     def damage(self):
+        """Subtracts damage from health,and disappears if health = 0"""
         self.health -= 1
         if self.health < 0:
             self.kill()
 
     def drop(self):
+        """Drops a point or power item based on chance"""
         if random.randint(0, 100) > 70:
             point = Point(self.rect.centerx, self.rect.bottom)
             all_sprites.add(point)
@@ -300,6 +320,7 @@ class Hard_Enemy(pygame.sprite.Sprite):
             powers.add(power)
 
 class Easy_Bullet_Enemy(pygame.sprite.Sprite):
+    """Creates an enemy that uses player position to shoot bullet towards player"""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)   
         self.image = pygame.Surface((30, 30))
@@ -321,6 +342,7 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
             self.speedy = random.randrange(1, 4)
 
     def shoot(self):
+        """Shoots bullets at designated increments by calling an enemy bullet class"""
         global easy_time
         if easy_time < 36:
             easy_time += 1
@@ -331,11 +353,13 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
             easy_time = 0
 
     def damage(self):
+        """Subtracts health from self, and kills if health = 0"""
         self.health -= 1
         if self.health < 0:
             self.kill()
 
     def drop(self):
+        """Drops point or power item based on luck"""
         if random.randint(0, 100) > 70:
             point = Point(self.rect.centerx, self.rect.bottom)
             all_sprites.add(point)
@@ -346,6 +370,7 @@ class Easy_Bullet_Enemy(pygame.sprite.Sprite):
             powers.add(power)
 
 class Hard_Bullet_Enemy(pygame.sprite.Sprite):
+    """Creates an enemy that shoots bullets in a square formation around itself"""
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)   
         self.image = pygame.Surface((30, 30))
@@ -364,6 +389,7 @@ class Hard_Bullet_Enemy(pygame.sprite.Sprite):
             self.rect.y = random.randrange(-100, -40)
 
     def shoot(self):
+        """Shoots bullets with a designated cooldown by calling an enemy bullet class"""
         global hard_time
         if hard_time < 70:
             hard_time += 1
@@ -410,6 +436,7 @@ class Hard_Bullet_Enemy(pygame.sprite.Sprite):
             powers.add(power)
 
 class Bullet(pygame.sprite.Sprite):
+    """Creates a bullet for the player to shoot"""
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = bullet
@@ -435,6 +462,7 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 class Easy_Bullet(pygame.sprite.Sprite):
+    """Creates a bullet that enemies use to track player"""
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((5, 5))
@@ -453,6 +481,7 @@ class Easy_Bullet(pygame.sprite.Sprite):
         self.rect.move_ip(self.V)
 
 class Hard_Bullet(pygame.sprite.Sprite):
+    """Creates a bullet that shoots out from various points on an enemy class"""
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((5, 5))
@@ -462,6 +491,7 @@ class Hard_Bullet(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.V = (0, 0)
         
+        #velocity is set based on position that the bullet is created in relation to the enemy
         if self.rect.centerx < hbe.rect.centerx + 5 and self.rect.centerx > hbe.rect.centerx - 5:
             self.X_vel = 0
         elif self.rect.centerx < hbe.rect.centerx:
@@ -480,6 +510,7 @@ class Hard_Bullet(pygame.sprite.Sprite):
         self.rect.move_ip(self.V)       
 
 class Point(pygame.sprite.Sprite):
+    """Creates a point item that increases points when collected"""
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((15, 15))
@@ -496,6 +527,7 @@ class Point(pygame.sprite.Sprite):
             self.kill()
 
 class Power(pygame.sprite.Sprite):
+    """Creates a power item that increases power when collected"""
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((15, 15))
@@ -511,6 +543,7 @@ class Power(pygame.sprite.Sprite):
         if self.rect.y > height:
             self.kill()
 
+#gets the image for the player bullet and scales it down
 bullet = pygame.image.load("src/img/heart.png")
 bullet = pygame.transform.scale(bullet, (15, 15))
 
@@ -606,7 +639,7 @@ while menu:
         difficulty_text = font_difficulty.render(f"Difficulty", True, white)
         quit_text = font_quit.render("Quit", True, black)
 
-    
+    #if the instructions tab was selected, these text lines display
     if instructions:
         instructions_selected_text = font_start.render("Move using the arrow keys.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 100))
@@ -634,8 +667,9 @@ while menu:
         screen.blit(instructions_selected_text, (width / 2.3, 375))
         instructions_selected_text = font_start.render("without touching the hitbox grants points.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 400))
-    
+    #if the difficulty tab was selected, these options are displayed
     if difficulty:
+        #following code changes tab color and mini description based on what tab is currently selected
         if difficulty_selection == 1:
             easy_text = font_easy.render(f"Easy", True, black)
             screen.blit(easy_text, (width / 2.3, 200) )
@@ -697,8 +731,6 @@ while menu:
 
     pygame.display.flip()
 
-
-
 #game starts the main loop
 while running:
     #game delays the reading of the code so its not too fast when it runs
@@ -708,7 +740,6 @@ while running:
         #exits game when pygame.quit is called
         if event.type == pygame.QUIT:
             sys.exit()
-    print(score_check)
 
     #sets the score_check based on the score the player has
     if score_check != 3:
@@ -758,14 +789,10 @@ while running:
             easy_bullet_enemies.add(ebe)
         score_check = 5
     if score_check == 6:
-        for n in range(5):
+        for n in range(10):
             se = Simple_Enemy()
             all_sprites.add(se)
             simple_enemies.add(se)
-        for n in range(1):
-            ebe = Easy_Bullet_Enemy()
-            all_sprites.add(ebe)
-            easy_bullet_enemies.add(ebe)
         score_check = 7
     if score_check == 8:
         for n in range(5):
@@ -782,6 +809,10 @@ while running:
             se = Simple_Enemy()
             all_sprites.add(se)
             simple_enemies.add(se)
+        for n in range(1):
+            ebe = Easy_Bullet_Enemy()
+            all_sprites.add(ebe)
+            easy_bullet_enemies.add(ebe)
         score_check = 11
     if score_check == 12:
         for n in range(5):
@@ -795,7 +826,7 @@ while running:
         score_check = 13
 
     keys = pygame.key.get_pressed()
-
+    #causes both bullet enemies to shoot based on how many enemies there are on screen
     for e in hard_bullet_enemies:
         e.shoot()
     for e in easy_bullet_enemies:
@@ -810,7 +841,7 @@ while running:
             player.shoot()
             shoot_time = 0
     all_sprites.update()
-    #checks to see if the bullets and enemies touch, both disappear if they are
+    #checks to see if the bullets and red enemies touch
     hits = pygame.sprite.groupcollide(simple_enemies, bullets, False, True)
     for hit in hits:
         hit.damage()
@@ -823,6 +854,7 @@ while running:
             simple_enemies.add(se)
             #score increases for eaach enemy killed
             score += 1  
+    #checks to see if bullets and orange enemies touch
     hits = pygame.sprite.groupcollide(hard_enemies, bullets, False, True)
     for hit in hits:
         hit.damage()
@@ -835,6 +867,7 @@ while running:
             hard_enemies.add(he)
             #score increases for eaach enemy killed
             score += 1   
+    #checks to see if purple enemies and bullets touch
     hits = pygame.sprite.groupcollide(hard_bullet_enemies, bullets, False, True)
     for hit in hits:
         hit.damage()
@@ -847,6 +880,7 @@ while running:
             hard_bullet_enemies.add(hbe)
             #score increases for eaach enemy killed
             score += 1  
+    #checks to see if purple enemies and bullets touch
     hits = pygame.sprite.groupcollide(easy_bullet_enemies, bullets, False, True)
     for hit in hits:
         hit.damage()
@@ -870,6 +904,7 @@ while running:
         power += 1
     #checks to see if player hitbox hit an enemy
     if invincibility == 0:
+        #checks to see if hitbox hit red enemies
         hits = pygame.sprite.spritecollide(hitbox, simple_enemies, False)
         if hits:
             if lives != 0:
@@ -880,6 +915,7 @@ while running:
             else:
                 #if no more lives remain, exit
                 running = False
+        #checks to see if hitbox hit purple enemy
         hits = pygame.sprite.spritecollide(hitbox, easy_bullet_enemies, False)
         if hits:
             if lives != 0:
@@ -890,6 +926,7 @@ while running:
             else:
                 #if no more lives remain, exit
                 running = False
+        #checks to see if hitbox hit bullets
         hits = pygame.sprite.spritecollide(hitbox, easy_bullets, False)
         if hits:
             if lives != 0:
@@ -900,6 +937,7 @@ while running:
             else:
                 #if no more lives remain, exit
                 running = False
+        #checks to see if hitbox hit orange enemy
         hits = pygame.sprite.spritecollide(hitbox, hard_enemies, False)
         if hits:
             if lives != 0:
@@ -910,6 +948,7 @@ while running:
             else:
                 #if no more lives remain, exit
                 running = False
+        #checks to see if hitbox hit purple enemy
         hits = pygame.sprite.spritecollide(hitbox, hard_bullet_enemies, False)
         if hits:
             if lives != 0:
@@ -920,6 +959,7 @@ while running:
             else:
                 #if no more lives remain, exit
                 running = False
+        #check to see if hitbox hit bullets
         hits = pygame.sprite.spritecollide(hitbox, hard_bullets, False)
         if hits:
             if lives != 0:
@@ -982,8 +1022,10 @@ while running:
             graze += 1
             graze_time = 0
 
+    #changes the screen to color silver
     screen.fill(silver)
 
+    #displays the sprites loaded onto groups
     all_sprites.draw(screen)
 
     #these rectangles set up the window formatting
@@ -1045,7 +1087,7 @@ while running:
                 lives_position += 10
             lives_position = round(width / 1.55) + 75
     
-    #these text update various numbers involved in game display
+    #these text update various numbers involved in game display on right hand side
     lives_text = font_lives.render("Lives: ", True, white)
     grazes_text = font_grazes.render(f"Grazes: {graze}", True, white)
     score_text = font_score.render(f"Score: {score} ", True, white)
@@ -1058,19 +1100,17 @@ while running:
 
     pygame.display.update()
 
+#this sections is active once the player runs out of lives
+#prints out different stats of the player, and returns a final score based on a calculation
 screen = pygame.display.set_mode( (width, height) )
 screen.fill(black)
 screen.blit(score_text, (100, 100))
 screen.blit(grazes_text, (100, 200))
 screen.blit(power_text, (100, 300))
-calculation_text = font_power.render(f"Final score: ({score}) + ({graze} * 2) + ({power})", True, white)
+calculation_text = font_power.render(f"Final score: ({score}) + ({graze} * 5) + ({power})", True, white)
 screen.blit(calculation_text, (100, 400))
-final_text = font_final.render(f"Final Score: {score + graze * 2 + power}", True, white)
+final_text = font_final.render(f"Final Score: {score + graze * 5 + power}", True, white)
 screen.blit(final_text, (100, 550))
 pygame.display.update()
+#display remains for a few seconds before automatically closing
 pygame.time.wait(6500)
-
-
-
-"""Things left to do for next time:
-- Add in final score screen when lives are 0"""

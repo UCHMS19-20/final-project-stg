@@ -11,12 +11,12 @@ pygame.mixer.init()
 #load and play background music
 pygame.mixer.music.load("src/mus/TOUCH.mp3")
 pygame.mixer.music.play(90, 1.5)
+pygame.display.set_caption('Start the game!')
 #allows the use of the clock to slow down main loop
 clock = pygame.time.Clock()
 #if statement has no purpose other than being able to store large amounts of variables
 if True:
-    width = 756
-    height = 610
+    width, height = 756, 610
     current_key = 0
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -32,7 +32,7 @@ if True:
     score = 0
     graze = 0
     size = 25
-    lives = 3
+    lives = 5
     shoot_time = 0
     easy_time = 0
     hard_time = 0
@@ -47,26 +47,9 @@ if True:
     instructions = False
     difficulty = False
     menu_selection = 1
-    font_grazes = pygame.font.SysFont("comicsansms", 20)
-    font_score = pygame.font.SysFont("comicsansms", 20)
-    font_power = pygame.font.SysFont("comicsansms", 20)
-    font_lives = pygame.font.SysFont("comicsansms", 20)
-    font_start = pygame.font.SysFont("comicsansms", 20)
-    font_instructions = pygame.font.SysFont("comicsansms", 20)
-    font_difficulty = pygame.font.SysFont("comicsansms", 20)
-    font_quit = pygame.font.SysFont("comicsansms", 20)
-    font_difficulty_selected = pygame.font.SysFont("comicsansms", 20)
-    font_instructions_selected = pygame.font.SysFont("comicsansms", 15)
-    font_easy = pygame.font.SysFont("comicsansms", 20)
+    font_small = pygame.font.SysFont("comicsansms", 15)
     font_medium = pygame.font.SysFont("comicsansms", 20)
-    font_hard = pygame.font.SysFont("comicsansms", 20)
-    font_Sanservino = pygame.font.SysFont("comicsansms", 20)
-    font_easy_description = pygame.font.SysFont("comicsansms", 15)
-    font_medium_description = pygame.font.SysFont("comicsansms", 15)
-    font_hard_description = pygame.font.SysFont("comicsansms", 15)
-    font_Sanservino_description = pygame.font.SysFont("comicsansms", 15)
-    font_final = pygame.font.SysFont("comicsansms", 30)
-    
+    font_large = pygame.font.SysFont("comicsansms", 30)
 
 pygame.display.flip()
 
@@ -619,110 +602,113 @@ while menu:
     screen.fill(pink)
     #based on what the variable is, it darkens the selected menu prompt
     if menu_selection == 1:
-        start_text = font_start.render(f"Start", True, black)
-        instructions_text = font_instructions.render(f"Instructions", True, white)
-        difficulty_text = font_difficulty.render(f"Difficulty", True, white)
-        quit_text = font_quit.render("Quit", True, white)
+        start_text = font_medium.render(f"Start", True, black)
+        instructions_text = font_medium.render(f"Instructions", True, white)
+        difficulty_text = font_medium.render(f"Difficulty", True, white)
+        quit_text = font_medium.render("Quit", True, white)
     if menu_selection == 2:
-        start_text = font_start.render(f"Start", True, white)
-        instructions_text = font_instructions.render(f"Instructions", True, black)
-        difficulty_text = font_difficulty.render(f"Difficulty", True, white)
-        quit_text = font_quit.render("Quit", True, white)
+        start_text = font_medium.render(f"Start", True, white)
+        instructions_text = font_medium.render(f"Instructions", True, black)
+        difficulty_text = font_medium.render(f"Difficulty", True, white)
+        quit_text = font_medium.render("Quit", True, white)
     if menu_selection == 3:
-        start_text = font_start.render(f"Start", True, white)
-        instructions_text = font_instructions.render(f"Instructions", True, white)
-        difficulty_text = font_difficulty.render(f"Difficulty", True, black)
-        quit_text = font_quit.render("Quit", True, white)
+        start_text = font_medium.render(f"Start", True, white)
+        instructions_text = font_medium.render(f"Instructions", True, white)
+        difficulty_text = font_medium.render(f"Difficulty", True, black)
+        quit_text = font_medium.render("Quit", True, white)
     if menu_selection == 4:
-        start_text = font_start.render(f"Start", True, white)
-        instructions_text = font_instructions.render(f"Instructions", True, white)
-        difficulty_text = font_difficulty.render(f"Difficulty", True, white)
-        quit_text = font_quit.render("Quit", True, black)
+        start_text = font_medium.render(f"Start", True, white)
+        instructions_text = font_medium.render(f"Instructions", True, white)
+        difficulty_text = font_medium.render(f"Difficulty", True, white)
+        quit_text = font_medium.render("Quit", True, black)
 
     #if the instructions tab was selected, these text lines display
     if instructions:
-        instructions_selected_text = font_start.render("Move using the arrow keys.", True, white)
+        instructions_selected_text = font_medium.render("Move using the arrow keys.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 100))
-        instructions_selected_text = font_start.render("Hold shift while moving to slow movements.", True, white)
+        instructions_selected_text = font_medium.render("Hold shift while moving to slow movements.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 125))
-        instructions_selected_text = font_start.render("Press Z to shoot out bullets.", True, white)
+        instructions_selected_text = font_medium.render("Press Z to shoot out bullets.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 150))
-        instructions_selected_text = font_start.render("Shoot enemies to drop power-ups.", True, white)
+        instructions_selected_text = font_medium.render("Shoot enemies to drop power-ups.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 175))
-        instructions_selected_text = font_start.render("Blue power-up increases power.", True, white)
+        instructions_selected_text = font_medium.render("Blue power-up increases power.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 200))
-        instructions_selected_text = font_start.render("Black power-up increases score.", True, white)
+        instructions_selected_text = font_medium.render("Black power-up increases score.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 225))
-        instructions_selected_text = font_start.render("Red enemies move straight down.", True, white)
+        instructions_selected_text = font_medium.render("Red enemies move straight down.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 250))
-        instructions_selected_text = font_start.render("Orange enemies cannot be defeated.", True, white)
+        instructions_selected_text = font_medium.render("Orange enemies cannot be defeated.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 275))
-        instructions_selected_text = font_start.render("Purple enemies shoot bullets.", True, white)
+        instructions_selected_text = font_medium.render("Purple enemies shoot bullets.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 300))
-        instructions_selected_text = font_start.render("When hit, you will lose a life.", True, white)
+        instructions_selected_text = font_medium.render("When hit, you will lose a life.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 325))
-        instructions_selected_text = font_start.render("Getting hit grants short invincibility.", True, white)
+        instructions_selected_text = font_medium.render("Getting hit grants short invincibility.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 350))
-        instructions_selected_text = font_start.render("Touching the enemies with the player", True, white)
+        instructions_selected_text = font_medium.render("Touching the enemies with the player", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 375))
-        instructions_selected_text = font_start.render("without touching the hitbox grants points.", True, white)
+        instructions_selected_text = font_medium.render("without touching the hitbox grants points.", True, white)
         screen.blit(instructions_selected_text, (width / 2.3, 400))
     #if the difficulty tab was selected, these options are displayed
     if difficulty:
         #following code changes tab color and mini description based on what tab is currently selected
         if difficulty_selection == 1:
-            easy_text = font_easy.render(f"Easy", True, black)
+            easy_text = font_medium.render(f"Easy", True, black)
             screen.blit(easy_text, (width / 2.3, 200) )
-            easy_description = font_easy_description.render("Nice and chillin'. 10 lives are given to the player.", True, white)
+            easy_description = font_small.render("Nice and chillin'. 10 lives are given to the player.", True, white)
             screen.blit(easy_description, (width / 2.3, 235) )
-            easy_description = font_easy_description.render("A casual player's preferred difficulty.", True, white)
+            easy_description = font_small.render("A casual player's preferred difficulty.", True, white)
             screen.blit(easy_description, (width / 2.3, 270) )
             medium_text = font_medium.render(f"Normal", True, white)
             screen.blit(medium_text, (width / 2.3, 300) )
-            hard_text = font_hard.render(f"Hard", True, white)
+            hard_text = font_medium.render(f"Hard", True, white)
             screen.blit(hard_text, (width / 2.3, 400) )
-            sanservino_text = font_Sanservino.render("Sanservino", True, white)
+            sanservino_text = font_medium.render("Sanservino", True, white)
             screen.blit(sanservino_text, (width / 2.3, 500) )
+            pygame.display.set_caption('I think you can go harder than that...')
         if difficulty_selection == 2:
-            easy_text = font_easy.render(f"Easy", True, white)
+            easy_text = font_medium.render(f"Easy", True, white)
             screen.blit(easy_text, (width / 2.3, 200) )
             medium_text = font_medium.render(f"Normal", True, black)
             screen.blit(medium_text, (width / 2.3, 300) )
-            medium_description = font_medium_description.render("A bit challenging. 5 lives are given to the player.", True, white)
+            medium_description = font_small.render("A bit challenging. 5 lives are given to the player.", True, white)
             screen.blit(medium_description, (width / 2.3, 335) )
-            medium_description = font_medium_description.render("Intended for most players.", True, white)
+            medium_description = font_small.render("Intended for most players.", True, white)
             screen.blit(medium_description, (width / 2.3, 370) )
-            hard_text = font_hard.render(f"Hard", True, white)
+            hard_text = font_medium.render(f"Hard", True, white)
             screen.blit(hard_text, (width / 2.3, 400) )
-            sanservino_text = font_Sanservino.render("Sanservino", True, white)
+            sanservino_text = font_medium.render("Sanservino", True, white)
             screen.blit(sanservino_text, (width / 2.3, 500) )
+            pygame.display.set_caption('This is not too bad.')
         if difficulty_selection == 3:
-            easy_text = font_easy.render(f"Easy", True, white)
+            easy_text = font_medium.render(f"Easy", True, white)
             screen.blit(easy_text, (width / 2.3, 200) )
             medium_text = font_medium.render(f"Normal", True, white)
             screen.blit(medium_text, (width / 2.3, 300) )
-            hard_text = font_hard.render(f"Hard", True, black)
+            hard_text = font_medium.render(f"Hard", True, black)
             screen.blit(hard_text, (width / 2.3, 400) )
-            hard_description = font_hard_description.render("Quite difficult. 2 lives are given to the player.", True, white)
+            hard_description = font_small.render("Quite difficult. 2 lives are given to the player.", True, white)
             screen.blit(hard_description, (width / 2.3, 435) )
-            hard_description = font_hard_description.render("Good for those who like to lose.", True, white)
+            hard_description = font_small.render("Good for those who like to lose.", True, white)
             screen.blit(hard_description, (width / 2.3, 470) )
-            sanservino_text = font_Sanservino.render("Sanservino", True, white)
+            sanservino_text = font_medium.render("Sanservino", True, white)
             screen.blit(sanservino_text, (width / 2.3, 500) )
+            pygame.display.set_caption('Feeling confident, huh?')
         if difficulty_selection == 4:
-            easy_text = font_easy.render(f"Easy", True, white)
+            easy_text = font_medium.render(f"Easy", True, white)
             screen.blit(easy_text, (width / 2.3, 200) )
             medium_text = font_medium.render(f"Normal", True, white)
             screen.blit(medium_text, (width / 2.3, 300) )
-            hard_text = font_hard.render(f"Hard", True, white)
+            hard_text = font_medium.render(f"Hard", True, white)
             screen.blit(hard_text, (width / 2.3, 400) )
-            sanservino_text = font_Sanservino.render("Sanservino", True, black)
-            sanservino_description = font_Sanservino_description.render("A brutal campaign with only one life.", True, white)
+            sanservino_text = font_medium.render("Sanservino", True, black)
+            sanservino_description = font_small.render("A brutal campaign with only one life.", True, white)
             screen.blit(sanservino_description, (width / 2.3, 535) )
-            sanservino_description = font_Sanservino_description.render("Good for masochists and idiots.", True, white)
+            sanservino_description = font_small.render("Good for masochists and idiots.", True, white)
             screen.blit(sanservino_description, (width / 2.3, 570) )
             screen.blit(sanservino_text, (width / 2.3, 500) )
-
+            pygame.display.set_caption('All right, clear your desk.')
 
     screen.blit(start_text, (width / 5, 250) )
     screen.blit(instructions_text, (width / 6, 325) )
@@ -745,21 +731,27 @@ while running:
     if score_check != 3:
         if score < 150 and score > 50:
             score_check = 2
+            pygame.display.set_caption("Let's add a little more.")
     if score_check != 5:
         if score < 300 and score > 150:
             score_check = 4
+            pygame.display.set_caption('Too easy?')
     if score_check != 7:
         if score < 450 and score > 300:
             score_check = 6
+            pygame.display.set_caption('Release the enemies!')
     if score_check != 9:
         if score < 750 and score > 450:
             score_check = 8
+            pygame.display.set_caption("Ooh, let's spice things up a bit.")
     if score_check != 11:
         if score < 1000 and score > 750:
             score_check = 10
+            pygame.display.set_caption('Impossible...')
     if score_check != 13:
         if score < 1250 and score > 1000:
             score_check = 12
+            pygame.display.set_caption('Now marks the end...')
     
     #sends out various enemies in waves as the player score increases
     if score_check == 0:
@@ -979,44 +971,45 @@ while running:
         invincibility = 0
         player.normal()
     #checks grazing and sees whether or not the player hits into the various types of enemies
+    #graze time cooldown is indicated to ensure that grazes aren't added too quickly
     grazing = pygame.sprite.spritecollide(player, simple_enemies, False)
     for grazes in grazing:
-        if graze_time < 5:
+        if graze_time < 10:
             graze_time += 1
         else:
             graze += 1
             graze_time = 0
     grazing = pygame.sprite.spritecollide(player, easy_bullet_enemies, False)
     for grazes in grazing:
-        if graze_time < 5:
+        if graze_time < 10:
             graze_time += 1
         else:
             graze += 1
             graze_time = 0
     grazing = pygame.sprite.spritecollide(player, easy_bullets, False)
     for grazes in grazing:
-        if graze_time < 5:
+        if graze_time < 10:
             graze_time += 1
         else:
             graze += 1
             graze_time = 0
     grazing = pygame.sprite.spritecollide(player, hard_enemies, False)
     for grazes in grazing:
-        if graze_time < 5:
+        if graze_time < 10:
             graze_time += 1
         else:
             graze += 1
             graze_time = 0
     grazing = pygame.sprite.spritecollide(player, hard_bullet_enemies, False)
     for grazes in grazing:
-        if graze_time < 5:
+        if graze_time < 10:
             graze_time += 1
         else:
             graze += 1
             graze_time = 0
     grazing = pygame.sprite.spritecollide(player, hard_bullets, False)
     for grazes in grazing:
-        if graze_time < 5:
+        if graze_time < 10:
             graze_time += 1
         else:
             graze += 1
@@ -1088,28 +1081,27 @@ while running:
             lives_position = round(width / 1.55) + 75
     
     #these text update various numbers involved in game display on right hand side
-    lives_text = font_lives.render("Lives: ", True, white)
-    grazes_text = font_grazes.render(f"Grazes: {graze}", True, white)
-    score_text = font_score.render(f"Score: {score} ", True, white)
-    power_text = font_power.render(f"Power: {power} ", True, white)
+    lives_text = font_medium.render("Lives: ", True, white)
+    grazes_text = font_medium.render(f"Grazes: {graze}", True, white)
+    score_text = font_medium.render(f"Score: {score} ", True, white)
+    power_text = font_medium.render(f"Power: {power} ", True, white)
     screen.blit(score_text, (width / 1.5, 10) )
     screen.blit(power_text, (width / 1.5, 80) )
     screen.blit(grazes_text, (width / 1.5, 150) )
     screen.blit(lives_text, (width / 1.5, 220))
-    
 
     pygame.display.update()
 
 #this sections is active once the player runs out of lives
 #prints out different stats of the player, and returns a final score based on a calculation
-screen = pygame.display.set_mode( (width, height) )
 screen.fill(black)
+pygame.display.set_caption('Try again next time.')
 screen.blit(score_text, (100, 100))
 screen.blit(grazes_text, (100, 200))
 screen.blit(power_text, (100, 300))
-calculation_text = font_power.render(f"Final score: ({score}) + ({graze} * 5) + ({power})", True, white)
+calculation_text = font_medium.render(f"Final score: ({score}) + ({graze} * 5) + ({power})", True, white)
 screen.blit(calculation_text, (100, 400))
-final_text = font_final.render(f"Final Score: {score + graze * 5 + power}", True, white)
+final_text = font_large.render(f"Final Score: {score + graze * 5 + power}", True, white)
 screen.blit(final_text, (100, 550))
 pygame.display.update()
 #display remains for a few seconds before automatically closing

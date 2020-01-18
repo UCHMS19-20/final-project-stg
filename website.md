@@ -39,7 +39,7 @@ Killing enemies, increasing power, and obtaining the black item drops will incre
 
 # Flowchart:
 
-link when I finish never
+https://drive.google.com/open?id=1odH4Y3KKj5NbQ-pJ6gFUCoikYlXkghUc
 
 # Presentation:
 
